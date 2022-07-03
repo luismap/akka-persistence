@@ -4,7 +4,7 @@ version := "0.1"
 
 scalaVersion := "2.12.7"
 lazy val akkaVersion = "2.5.13" // must be 2.5.13 so that it's compatible with the stores plugins (JDBC and Cassandra)
-lazy val leveldbVersion = "0.7"
+lazy val leveldbVersion = "0.12"
 lazy val leveldbjniVersion = "1.8"
 lazy val postgresVersion = "42.2.2"
 lazy val cassandraVersion = "0.91"
@@ -23,10 +23,12 @@ lazy val root = (project in file("."))
       "com.typesafe.akka" %% "akka-testkit" % akkaVersion,
 
       // local levelDB stores
-      "org.iq80.leveldb"            % "leveldb"          % leveldbVersion,
-      "org.fusesource.leveldbjni"   % "leveldbjni-all"   % leveldbjniVersion,
+      "org.iq80.leveldb" % "leveldb" % leveldbVersion,
+      //"org.fusesource.leveldbjni" % "leveldbjni-all" % leveldbjniVersion,
+      //"org.fusesource.leveldbjni" % "leveldbjni-osx"% leveldbjniVersion,
 
-      // JDBC with PostgreSQL
+
+// JDBC with PostgreSQL
       "org.postgresql" % "postgresql" % postgresVersion,
       "com.github.dnvriend" %% "akka-persistence-jdbc" % "3.4.0",
 
@@ -41,6 +43,6 @@ lazy val root = (project in file("."))
       "org.scalatest" %% "scalatest" % "3.0.8" % "test"
     )
   )
-
+libraryDependencies += "org.openlabtesting.leveldbjni" % "leveldbjni-linux64-aarch64" % "1.8"
 
 
