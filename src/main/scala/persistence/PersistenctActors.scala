@@ -33,7 +33,7 @@ object PersistenctActors extends App {
       case InvoiceRecorded(id, _, _, amount) =>
         latestInvoiceId = id
         totalAmount += amount
-        log.info(s"[recovering] updating state with $amount")
+        log.info(s"[recovering] updating state with $amount for a total of $totalAmount")
     }
 
     /**
@@ -43,18 +43,34 @@ object PersistenctActors extends App {
      * - update actor state
      */
     override def receiveCommand: Receive = {
+      case "print" =>
+        log.info(s"[printing] current invoice: $latestInvoiceId with total: $totalAmount")
       case Invoice(recipient, date, amount) =>
         log.info(s"[invoice] $recipient with total $amount")
-        persist(InvoiceRecorded(latestInvoiceId,recipient, date, amount)) {
+        persist(InvoiceRecorded(latestInvoiceId,recipient, date, amount))
+        /**
+         * during the time gap of persist and callback function
+         * persistentActor will stash all received messages to keep consistency
+         */
+        {
           e =>
+
+            /**
+             * safe to access mutable state here,
+             * persist guarantees that not other thread access the actor
+             * during the call back
+             */
             latestInvoiceId = UUID.randomUUID()
             totalAmount += amount
-            log.info(s"[persisted] event with amount $amount")
+            //correctly identify the sender of the message
+            //sender() ! "PersistenceAck"
+            log.info(s"[persisted] event with amount $amount for a total $totalAmount")
         }
     }
 
 
-    override def persistenceId: String = "accountant-" + UUID.randomUUID()
+    //the id should be unique, and is the one use for recovery
+    override def persistenceId: String = "accountant-01"
   }
 
 
@@ -64,10 +80,13 @@ object PersistenctActors extends App {
   implicit val execCtx = guardian.dispatcher
   val rnd = Random
 
-  for (1 <- 0 to 10 ) accountant ! Invoice("Bleak Inc.", new Date(), rnd.nextInt(1000))
+ for ( e <- 0 to 10 ) {
+   accountant ! Invoice("Bleak Inc.", new Date(), rnd.nextInt(1000))
+   if (e % 2 == 0) accountant ! "print"
+ }
 
 
-  scheduler.scheduleOnce(12 seconds){
+  scheduler.scheduleOnce(6 seconds){
     guardian.terminate()
   }
 
