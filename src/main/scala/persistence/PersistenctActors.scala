@@ -19,6 +19,8 @@ object PersistenctActors extends App {
    * - handle shutdown logic yourself
    *    because now the message will be handle by the persistence actor logic in the same mailbox
    *
+   * - base on CMD and Events
+   *
    */
   sealed trait InvoiceCommands
 
