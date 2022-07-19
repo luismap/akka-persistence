@@ -23,6 +23,8 @@ lazy val root = (project in file("."))
       "com.typesafe.akka" %% "akka-persistence" % akkaVersion,
       "com.typesafe.akka" %% "akka-testkit" % akkaVersion,
 
+      "log4j" % "log4j" % "1.2.14",
+
       // local levelDB stores
       "org.iq80.leveldb" % "leveldb" % leveldbVersion,
       "org.fusesource.leveldbjni" % "leveldbjni-all" % leveldbjniVersion,
