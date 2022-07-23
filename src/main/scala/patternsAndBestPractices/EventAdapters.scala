@@ -84,6 +84,13 @@ object EventAdapters extends App {
    *
    * journal -> serializer -> read event adapter -> actor receive event
    * has some bytes -> has V1  of guitar -> convert V1 to V2 -> received V2
+   *
+   * there is also writeEventAdapter and EventAdapter, which
+   * actor receive -> write-event-adapter -> serialize -> toJournal
+   *
+   * and envent adapter, which implements boths.
+   *
+   * WriteEventAdapter, useful for backwards compatibility
    */
   class GuitarReadEventAdapter extends ReadEventAdapter {
     override def fromJournal(event: Any, manifest: String): EventSeq = event match {
