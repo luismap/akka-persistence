@@ -15,6 +15,7 @@ object ActorSerialization extends App {
    * for actor serialization
    *  - create serializer
    *  - bind serializer in config for which events it will be use
+   *  - each event needs its own serialization class
    */
 
   val guardian = ActorSystem("Registration", ConfigFactory.load().getConfig("customSerializer"))
